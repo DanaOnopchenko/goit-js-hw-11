@@ -34,7 +34,7 @@ const observer = new IntersectionObserver(onLoad, options);
 
 function onFormSubmit(evt) { 
     evt.preventDefault();
-    let searchQuery = evt.currentTarget.elements.searchQuery.value.trim();
+    searchQuery = evt.currentTarget.elements.searchQuery.value.trim();
     clearMarkupgallery()
     // console.log(searchQuery)
     if (!searchQuery) { 
@@ -107,6 +107,7 @@ function onLoad(entries, observer) {
         if (entry.isIntersecting) { 
             console.log('I see you');
             page += 1;
+            // let searchQuery = evt.currentTarget.elements.searchQuery.value.trim();
             fetchJpegApi(searchQuery, page).then(data => { 
                 totalImage += data.hits.length;
               Notify.info(`Hooray! We found ${totalImage} images.`)

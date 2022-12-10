@@ -23,10 +23,13 @@ ul {
   padding: 0;
   margin: 0;
 }
+p {
+  margin: 0;
+}
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 25px;
 }
 .info {
   margin-top: auto;
@@ -41,6 +44,10 @@ ul {
   font-size: 14px;
 }
 img {
-  width: 200px;
+  width: 300px;
   height: auto;
+  object-fit: cover;
+}
+.photo-card {
+  flex-basis: calc((100% - 10px * (4 - 1)) / 4);
 }

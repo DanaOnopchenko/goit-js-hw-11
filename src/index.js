@@ -1,6 +1,8 @@
 import './css/styles.css';
 import { fetchJpegApi } from './js/fetchJpegApi';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 
 const refs = {
@@ -129,6 +131,7 @@ function clearMarkupgallery() {
     refs.gallery.innerHTML=''
 }
 
+new SimpleLightbox('.gallery a',{ captionDelay: 250 });
 // function photosApi(page=1) { 
 //     const API_KEY = '31885081-e3ce08364707c8044635d8ba7'
 //     const BASE_URL = 'https://pixabay.com/api/'

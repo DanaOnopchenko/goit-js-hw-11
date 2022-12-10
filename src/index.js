@@ -3,13 +3,15 @@ import './css/styles.css';
 
 
 const refs = {
+    form: document.querySelector('#search-form'),
     gallery: document.querySelector('.gallery'),
     load: document.querySelector('.load-more'),
     quard: document.querySelector('.js-guard')
 }
+
+console.log(refs.form)
 // refs.load.addEventListener('click', onLoadMore)
-
-
+refs.form.addEventListener('submit', onFormSubmit);
 
 
 let page = 1;
@@ -22,13 +24,22 @@ let options = {
   threshold: 1.0,
 };
 
+let searchQuery = '';
+
+function onFormSubmit(evt) { 
+   evt.preventDefault();
+    searchQuery = evt.currentTarget.elements.searchQuery.value.trim();
+    console.log('searchQuery', searchQuery)
+}
+
+
 const observer = new IntersectionObserver(onLoad, options);
 
-function photosApi(page=1) { 
+function photosApi(searchQuery, page) { 
     const API_KEY = '31885081-e3ce08364707c8044635d8ba7'
     const BASE_URL = 'https://pixabay.com/api/'
-    const filters = `per_page=100&image_type=photo&orientation=horizontal&safesearch=true`
-     return fetch(`${BASE_URL}?key=${API_KEY}&q=cat&page=${page}&${filters}`).then(resp => { 
+    const filters = `per_page=${perPage}&image_type=photo&orientation=horizontal&safesearch=true`
+     return fetch(`${BASE_URL}?key=${API_KEY}&q=${searchQuery}&page=${page}&${filters}`).then(resp => { 
         if (!resp.ok){ 
             throw new Error()
         }

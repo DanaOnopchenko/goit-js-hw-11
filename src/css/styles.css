@@ -18,3 +18,29 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+.info {
+  margin-top: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  font-size: 14px;
+}
+img {
+  width: 200px;
+  height: auto;
+}

@@ -1,56 +1,92 @@
 import './css/styles.css';
-
+import { fetchJpegApi } from './js/fetchJpegApi';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 
 const refs = {
     form: document.querySelector('#search-form'),
     gallery: document.querySelector('.gallery'),
     load: document.querySelector('.load-more'),
-    quard: document.querySelector('.js-guard')
-}
+    quard: document.querySelector('.js-guard'),
+   }
 
-console.log(refs.form)
+// console.dir(refs.form)
 // refs.load.addEventListener('click', onLoadMore)
-refs.form.addEventListener('submit', onFormSubmit);
 
+refs.form.addEventListener("submit", onFormSubmit);
+// let searchQuery = '';
 
-let page = 1;
-const perPage = 100;
-let totalPage = 0;
 
 let options = {
   root: null,
-  rootMargin: '150px',
+  rootMargin: '200px',
   threshold: 1.0,
 };
 
+let page = 1;
+// const perPage = 100;
+// let totalPage = 0;
+let totalImage = 0;
 let searchQuery = '';
-
-function onFormSubmit(evt) { 
-   evt.preventDefault();
-    searchQuery = evt.currentTarget.elements.searchQuery.value.trim();
-    console.log('searchQuery', searchQuery)
-}
 
 
 const observer = new IntersectionObserver(onLoad, options);
 
-function photosApi(searchQuery, page) { 
-    const API_KEY = '31885081-e3ce08364707c8044635d8ba7'
-    const BASE_URL = 'https://pixabay.com/api/'
-    const filters = `per_page=${perPage}&image_type=photo&orientation=horizontal&safesearch=true`
-     return fetch(`${BASE_URL}?key=${API_KEY}&q=${searchQuery}&page=${page}&${filters}`).then(resp => { 
-        if (!resp.ok){ 
-            throw new Error()
+function onFormSubmit(evt) { 
+    evt.preventDefault();
+    let searchQuery = evt.currentTarget.elements.searchQuery.value.trim();
+    clearMarkupgallery()
+    // console.log(searchQuery)
+    if (!searchQuery) { 
+         clearMarkupgallery();
+        Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
+        return;
+            };
+   
+    fetchJpegApi(searchQuery,page)
+        .then(data => { 
+            console.log(data)
+            if (!data.totalHits) {
+                console.log(data.totalHits)
+                clearMarkupgallery();
+                   Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
+                return
+            }
+            totalImage += data.hits.length;
+             Notify.info(`Hooray! We found ${totalImage} images.`)
+            refs.gallery.insertAdjacentHTML('beforeend', creatMarkup(data.hits))
+              observer.observe(refs.quard)
         }
-        return resp.json('')
-    })
+           
+        )
 }
 
-photosApi().then(data => { 
-    refs.gallery.insertAdjacentHTML('beforeend', creatMarkup(data.hits))
-    observer.observe(refs.quard)
-}).catch(err=>console.log(err))
+
+
+
+
+
+
+
+// function onFormSubmit(evt) { 
+//    evt.preventDefault();
+//     searchQuery = evt.currentTarget.elements.searchQuery.value.trim();
+//     console.log('searchQuery', searchQuery);
+//     if (!searchQuery) { 
+//         alert('Sorry, there are no images matching your search query. Please try again.')
+//         return
+//     }
+//     // photosApi(searchQuery)
+// }
+
+
+
+
+
+// photosApi().then(data => { 
+//     refs.gallery.insertAdjacentHTML('beforeend', creatMarkup(data.hits))
+//     observer.observe(refs.quard)
+// }).catch(err=>console.log(err))
 
 
 function creatMarkup(arr) { 
@@ -71,17 +107,25 @@ function onLoad(entries, observer) {
         if (entry.isIntersecting) { 
             console.log('I see you');
             page += 1;
-            photosApi(page).then(data => { 
+            fetchJpegApi(searchQuery, page).then(data => { 
+                totalImage += data.hits.length;
+              Notify.info(`Hooray! We found ${totalImage} images.`)
                 refs.gallery.insertAdjacentHTML('beforeend', creatMarkup(data.hits));
-                totalPage = Math.ceil(data.totalHits/perPage);
-                if (page === totalPage) { 
-observer.unobserve(refs.quard)
+                // totalPage = Math.ceil(data.totalHits/perPage);
+                if (totalImage >= data.totalHits) { 
+                    observer.unobserve(refs.quard)
+                    Notify.info(`We're sorry, but you've reached the end of search results.`);
                 }  
             })
         }
     });
     console.log(entries)
 }
+
+function clearMarkupgallery() { 
+    refs.gallery.innerHTML=''
+}
+
 // function photosApi(page=1) { 
 //     const API_KEY = '31885081-e3ce08364707c8044635d8ba7'
 //     const BASE_URL = 'https://pixabay.com/api/'

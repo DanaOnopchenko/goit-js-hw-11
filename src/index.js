@@ -44,7 +44,10 @@ function onFormSubmit(evt) {
          clearMarkupgallery();
         Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
         return;
-            };
+        
+    };
+   
+    
    
     fetchJpegApi(searchQuery,page)
         .then(data => { 

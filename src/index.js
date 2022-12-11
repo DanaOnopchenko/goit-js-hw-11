@@ -129,7 +129,7 @@ function onLoad(entries, observer) {
                     observer.unobserve(refs.quard)
                     Notify.info(`We're sorry, but you've reached the end of search results.`);
                 }  
-            })
+            }).catch(err => console.log(err))
         }
     });
     console.log(entries)

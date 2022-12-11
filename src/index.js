@@ -39,6 +39,8 @@ function onFormSubmit(evt) {
     evt.preventDefault();
     searchQuery = evt.currentTarget.elements.searchQuery.value.trim();
     clearMarkupgallery()
+    page = 1;
+    totalImage = 0;
     // console.log(searchQuery)
     if (!searchQuery) { 
          clearMarkupgallery();
@@ -46,9 +48,7 @@ function onFormSubmit(evt) {
         return;
         
     };
-   
-    
-   
+     
     fetchJpegApi(searchQuery,page)
         .then(data => { 
             console.log(data)

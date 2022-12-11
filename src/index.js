@@ -1,8 +1,10 @@
+
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 import './css/styles.css';
 import { fetchJpegApi } from './js/fetchJpegApi';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
+
 
 
 const refs = {
@@ -18,6 +20,7 @@ const refs = {
 refs.form.addEventListener("submit", onFormSubmit);
 // let searchQuery = '';
 
+const simpleligthbox = new SimpleLightbox('.gallery a');
 
 let options = {
   root: null,
@@ -26,8 +29,6 @@ let options = {
 };
 
 let page = 1;
-// const perPage = 100;
-// let totalPage = 0;
 let totalImage = 0;
 let searchQuery = '';
 
@@ -57,10 +58,11 @@ function onFormSubmit(evt) {
             totalImage += data.hits.length;
              Notify.info(`Hooray! We found ${totalImage} images.`)
             refs.gallery.insertAdjacentHTML('beforeend', creatMarkup(data.hits))
-              observer.observe(refs.quard)
+            observer.observe(refs.quard);
+            simpleligthbox.refresh();
         }
            
-        )
+        ).catch(err => console.log(err))
 }
 
 
@@ -92,18 +94,21 @@ function onFormSubmit(evt) {
 
 
 function creatMarkup(arr) { 
-    return arr.map(({ webformatURL,largeImageURL, tags, likes, views, comments, downloads }) => `
-    <div class="photo-card">
-    <a href="${largeImageURL}">
-<img src="${webformatURL}" alt="${tags}" loading="lazy"/>
-</a>
-<div class="info">
-<p><b>Likes: </b>${likes}</p>
-<p><b>Views: </b>${views}</p>
-<p><b>Comments: </b>${comments}</p>
- <p><b>Downloads: </b>${downloads}</p>
-  </div>
-    </div>`).join('')
+    return arr.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads
+    }) => `<div class="photo-card">
+         <div class="photo-thumb">
+        <a class="gallery__item"  href="${largeImageURL}">
+        <img src="${webformatURL}" alt="${tags}" loading="lazy"/>
+        </a>
+      </div>
+      <div class="info">
+        <p class="info-item"><b>Likes: </b>${likes}</p>
+        <p class="info-item"><b>Views: </b>${views}</p>
+        <p class="info-item"><b>Comments: </b>${comments}</p>
+        <p class="info-item"><b>Downloads: </b>${downloads}</p>
+      </div>
+    </div>
+    `).join('')
 }
 
 function onLoad(entries, observer) { 
@@ -116,7 +121,7 @@ function onLoad(entries, observer) {
                 totalImage += data.hits.length;
               Notify.info(`Hooray! We found ${totalImage} images.`)
                 refs.gallery.insertAdjacentHTML('beforeend', creatMarkup(data.hits));
-                // totalPage = Math.ceil(data.totalHits/perPage);
+                  
                 if (totalImage >= data.totalHits) { 
                     observer.unobserve(refs.quard)
                     Notify.info(`We're sorry, but you've reached the end of search results.`);
@@ -131,7 +136,8 @@ function clearMarkupgallery() {
     refs.gallery.innerHTML=''
 }
 
-new SimpleLightbox('.gallery a',{ captionDelay: 250 });
+
+
 // function photosApi(page=1) { 
 //     const API_KEY = '31885081-e3ce08364707c8044635d8ba7'
 //     const BASE_URL = 'https://pixabay.com/api/'
